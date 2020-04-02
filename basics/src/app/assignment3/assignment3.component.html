@@ -1,0 +1,16 @@
+<button 
+  class="btn btn-primary"
+  (click)="onClick()"
+>
+  Display Details
+</button>
+<p *ngIf="displayDetails">THESE ARE THE DETAILS</p>
+
+<p 
+  *ngFor="let buttonClick of clicks; let i = index;"
+  [ngClass]="{
+    'blue-background': i >= 5
+  }"
+>
+  {{ buttonClick }}
+</p>
