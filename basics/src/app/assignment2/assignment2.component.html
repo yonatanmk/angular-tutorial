@@ -1,0 +1,9 @@
+<input 
+  type="text"
+  class="form-control"
+  (input)="onUpdateUsername($event)"
+  [value]="username"
+  placeholder='Username'
+>
+<p>Username: {{ username }}</p>
+<button class="btn btn-danger" [disabled]="!username" (click)="clearUsername()">Clear Username</button>
