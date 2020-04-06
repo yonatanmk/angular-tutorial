@@ -1,1 +1,3 @@
-<p>Hello</p>
+<app-game-control (numberGenerated)="onNumberGenerated($event)"></app-game-control>
+<app-odd *ngFor="let odd of odds" [odd]="odd"></app-odd>
+<app-even *ngFor="let even of evens" [number]="even"></app-even>
