@@ -19,7 +19,7 @@ import { NewAccountComponent } from './new-account/new-account.component';
     BrowserModule,
     FormsModule,
   ],
-  providers: [AccountsService, LoggingService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
