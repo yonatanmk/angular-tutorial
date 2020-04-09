@@ -25,6 +25,10 @@ export class RecipeService {
     return this.recipes.slice(); // copies the array to prevent mutation of the original
   }
 
+  getRecipe(index: number) {
+    return this.recipes[index]
+  }
+
   addIngredientsToShoppingList(ingredients: Ingredient[]) {
     this.shoppingListService.addIngredients(ingredients)
   }
