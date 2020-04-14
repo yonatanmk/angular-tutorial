@@ -7,7 +7,7 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  @ViewChild('f') signUpForm: NgForm;
+  @ViewChild('f', { static: false }) signUpForm: NgForm;
   defaultQuestion = 'pet';
   // defaultQuestion = 'teacher';
 
