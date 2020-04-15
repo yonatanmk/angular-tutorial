@@ -2,9 +2,12 @@ import { Injectable } from '@angular/core';
 import { Recipe } from './recipe.model';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
+import { Subject } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class RecipeService {
+  recipesChanged = new Subject<Recipe[]>();
+
   private recipes: Recipe[] = [
     new Recipe('Grilled Chicken', 'Yumm', 'https://hips.hearstapps.com/hmg-prod/images/grilled-chicken-horizontal-1532030541.jpg', [
       new Ingredient('Chicken Breast', 6),
@@ -14,7 +17,7 @@ export class RecipeService {
       new Ingredient('Chicken Breast', 3),
       new Ingredient('Spices', 2),
       new Ingredient('Asparagus', 25),
-      new Ingredient('Lemon', 0.5),
+      new Ingredient('Lemon', 1),
     ]),
   ];
 
@@ -30,5 +33,20 @@ export class RecipeService {
 
   addIngredientsToShoppingList(ingredients: Ingredient[]) {
     this.shoppingListService.addIngredients(ingredients)
+  }
+
+  addRecipe(recipe: Recipe) {
+    this.recipes.push(recipe);
+    this.recipesChanged.next(this.recipes.slice())
+  } 
+
+  updateRecipe(index: number, newRecipe: Recipe) {
+    this.recipes[index] = newRecipe;
+    this.recipesChanged.next(this.recipes.slice())
+  }
+
+  deleteRecipe(index: number) {
+    this.recipes.splice(index, 1);
+    this.recipesChanged.next(this.recipes.slice())
   }
 }
