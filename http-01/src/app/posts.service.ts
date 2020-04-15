@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators'
+import { HttpClient, HttpHeaders, HttpParams, HttpEventType } from '@angular/common/http';
+import { map, catchError, tap } from 'rxjs/operators'
 import { Subject, throwError } from 'rxjs'
 
 import { Post } from './post.model';
@@ -11,26 +11,19 @@ export class PostsService {
 
   constructor(private http: HttpClient) {}
 
-  createAndStorePost(title: string, content: string) {
-    const postData = { title, content };
-    return this.http
-      .post<{ name: string }>(
-        'https://ng-complete-guide-ba5d8.firebaseio.com/posts.json', // .json suffix required by firebase
-        postData
-      )
-      .subscribe(
-        responseData => {
-          console.log(responseData);
-        },
-        error => {
-          console.log(error);
-          this.error.next(error.error.error);
-        }
-      );
-  }
-
   fetchPosts() {
-    return this.http.get<{ [key: string]: Post }>('https://ng-complete-guide-ba5d8.firebaseio.com/posts.json')
+    let searchParams = new HttpParams();
+    searchParams = searchParams.append('print', 'pretty') // a param provided by firebase
+    searchParams = searchParams.append('custom', 'key')
+
+    return this.http.get<{ [key: string]: Post }>(
+      'https://ng-complete-guide-ba5d8.firebaseio.com/posts.json',
+      {
+        headers: new HttpHeaders({ 'Custom-Header': 'Hello' }),
+        // params: new HttpParams().set('print', 'pretty') // a param provided by firebase
+        params: searchParams,
+      },
+    )
       // .pipe(map((responseData: { [key: string]: Post }) => {
       .pipe(
         map(responseData => {
@@ -49,7 +42,45 @@ export class PostsService {
       );
   }
 
+  createAndStorePost(title: string, content: string) {
+    const postData = { title, content };
+    return this.http
+      .post<{ name: string }>(
+        'https://ng-complete-guide-ba5d8.firebaseio.com/posts.json', // .json suffix required by firebase
+        postData,
+        {
+          // observe: 'body'
+          observe: 'response', // get whole response instead of just the body
+        }
+      )
+      .subscribe(
+        responseData => {
+          console.log(responseData);
+        },
+        error => {
+          console.log(error);
+          this.error.next(error.error.error);
+        }
+      );
+  }
+
   deletePosts() {
-    return this.http.delete('https://ng-complete-guide-ba5d8.firebaseio.com/posts.json')
+    return this.http.delete(
+      'https://ng-complete-guide-ba5d8.firebaseio.com/posts.json',
+      {
+        // observe: 'body'
+        observe: 'events',
+        responseType: 'text',
+      }
+    )
+      .pipe(tap(event => {
+        console.log(event)
+        if (event.type === HttpEventType.Response) {
+          console.log(event.body)
+        }
+        if (event.type === HttpEventType.Sent) {
+          console.log(event)
+        }
+      }))
   }
 }
